@@ -1,13 +1,35 @@
+const nodemailer = require('nodemailer');
+
 module.exports = async function (context, req) {
-  context.log('JavaScript HTTP trigger function processed a request.');
+  let transporter = nodemailer.createTransport({
+    service: 'hotmail',
+    auth: {
+      //   user: process.env.EMAIL,
+      //   pass: process.env.PASSWORD,
+      user: 'kffsande@outlook.com',
+      pass: 'Pwd4Kff5and3',
+    },
+  });
 
-  const name = req.query.name || (req.body && req.body.name);
-  const responseMessage = name
-    ? 'Hello, ' + name + '. This HTTP triggered function executed successfully.'
-    : 'This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.';
-
-  context.res = {
-    // status: 200, /* Defaults to 200 */
-    body: responseMessage,
+  const mailOptions = {
+    from: 'kffsande@outlook.com',
+    to: 'kffsande@outlook.com',
+    // subject: "Test",
+    // text: "Test"
+    subject: req.body.emailSubject,
+    text: req.body.emailBody,
+    html:
+      '<div><table><thead><tr><th>Product ID</th><th>Name</th></tr></thead><tbody>' +
+      req.body.emailBody +
+      '</tbody></table></div>',
+    // headers: { 'x-myheader': 'test header' }
   };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Sent: ' + info.response);
+    }
+  });
 };
